@@ -12,16 +12,16 @@ import './App.css';
 
 //You must add your own API key here from Clarifai.
 const app = new Clarifai.App({
- apiKey: 'YOUR_API_HERE'
+ apiKey: '61a5041b697a4cfc80e4f923b8dff7d6'
 });
 
 const particlesOptions = {
   particles: {
     number: {
-      value: 30,
+      value: 120,
       density: {
         enable: true,
-        value_area: 800
+        value_area: 900
       }
     }
   }
@@ -85,7 +85,7 @@ class App extends Component {
         this.state.input)
       .then(response => {
         if (response) {
-          fetch('http://localhost:3000/image', {
+          fetch('https://shielded-escarpment-24466.herokuapp.com/image', {
             method: 'put',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({

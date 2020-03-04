@@ -6,7 +6,8 @@ class Register extends React.Component {
     this.state = {
       email: '',
       password: '',
-      name: ''
+      name: '',
+      status:''
     }
   }
 
@@ -23,22 +24,29 @@ class Register extends React.Component {
   }
 
   onSubmitSignIn = () => {
-    fetch('http://localhost:3000/register', {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
-        name: this.state.name
+    if(this.state.name.length>0 && this.state.email.length>0 && this.state.password.length>0)
+    {
+      fetch('https://shielded-escarpment-24466.herokuapp.com/register', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          email: this.state.email,
+          password: this.state.password,
+          name: this.state.name
+        })
       })
-    })
       .then(response => response.json())
       .then(user => {
-        if (user) {
-          this.props.loadUser(user)
-          this.props.onRouteChange('home');
-        }
+          if (user.id) {
+            this.props.loadUser(user)
+            this.props.onRouteChange('home');
+          }
       })
+    }
+    else
+    {
+      this.setState({status:'please fill text in these fields'});
+    }
   }
 
   render() {
@@ -55,6 +63,7 @@ class Register extends React.Component {
                   type="text"
                   name="name"
                   id="name"
+                  required={true}
                   onChange={this.onNameChange}
                 />
               </div>
@@ -65,6 +74,7 @@ class Register extends React.Component {
                   type="email"
                   name="email-address"
                   id="email-address"
+                  required={true}
                   onChange={this.onEmailChange}
                 />
               </div>
@@ -75,6 +85,7 @@ class Register extends React.Component {
                   type="password"
                   name="password"
                   id="password"
+                  required={true}
                   onChange={this.onPasswordChange}
                 />
               </div>
@@ -82,10 +93,13 @@ class Register extends React.Component {
             <div className="">
               <input
                 onClick={this.onSubmitSignIn}
-                className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
+                className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib hover-bg-light-gray"
                 type="submit"
                 value="Register"
               />
+            </div>
+            <div>
+              <p className='b dark-red'>{this.state.status}</p>
             </div>
           </div>
         </main>

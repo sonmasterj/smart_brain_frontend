@@ -5,7 +5,8 @@ class Signin extends React.Component {
     super(props);
     this.state = {
       signInEmail: '',
-      signInPassword: ''
+      signInPassword: '',
+      status:''
     }
   }
 
@@ -18,21 +19,31 @@ class Signin extends React.Component {
   }
 
   onSubmitSignIn = () => {
-    fetch('http://localhost:3000/signin', {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        email: this.state.signInEmail,
-        password: this.state.signInPassword
+    if(this.state.signInEmail.length>0 && this.state.signInPassword.length>0)
+    {
+      fetch('https://shielded-escarpment-24466.herokuapp.com/signin', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          email: this.state.signInEmail,
+          password: this.state.signInPassword
+        })
       })
-    })
-      .then(response => response.json())
-      .then(user => {
-        if (user.id) {
-          this.props.loadUser(user)
-          this.props.onRouteChange('home');
-        }
-      })
+        .then(response => response.json())
+        .then(user => {
+          console.log(user);
+          if (user.id) {
+            this.props.loadUser(user)
+            this.props.onRouteChange('home');
+          }
+          else{
+            this.setState({status:"wrong password or email"})
+          }
+        })
+    }
+    else{
+      this.setState({status:'please enter text in these fields'});
+    }
   }
 
   render() {
@@ -50,6 +61,7 @@ class Signin extends React.Component {
                   type="email"
                   name="email-address"
                   id="email-address"
+                  required={true}
                   onChange={this.onEmailChange}
                 />
               </div>
@@ -60,6 +72,7 @@ class Signin extends React.Component {
                   type="password"
                   name="password"
                   id="password"
+                  required={true}
                   onChange={this.onPasswordChange}
                 />
               </div>
@@ -67,13 +80,16 @@ class Signin extends React.Component {
             <div className="">
               <input
                 onClick={this.onSubmitSignIn}
-                className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
+                className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib hover-bg-light-gray"
                 type="submit"
                 value="Sign in"
               />
             </div>
             <div className="lh-copy mt3">
               <p  onClick={() => onRouteChange('register')} className="f6 link dim black db pointer">Register</p>
+            </div>
+            <div>
+              <p className='b dark-red'>{this.state.status}</p>
             </div>
           </div>
         </main>
